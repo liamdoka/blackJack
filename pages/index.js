@@ -1,7 +1,18 @@
 import Head from 'next/head'
+import Board from '../components/board'
+import Controls from '../components/controls'
 import styles from '../styles/Home.module.scss'
 
 export default function Home() {
+
+  const playerHand = [{number: '8', suit: 'spades', value: 8}, {number: 'K', suit: 'hearts', value: 10}];
+  const dealerHand = [{number: '8', suit: 'spades', value: 8}, {number: 'K', suit: 'hearts', value: 10}];
+
+  for (let i = 0; i < playerHand.length; i++) {
+    playerHand[i]['key'] = i + playerHand.length;
+    dealerHand[i]['key'] = i;
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,7 +23,8 @@ export default function Home() {
 
       <h1 className={styles.title}>Jack Black</h1>
       <section>
-        <div>here is where the magic happens</div>      
+        <Board playerHand={playerHand} dealerHand={dealerHand} />
+        <Controls />
       </section>
     </div>
   )

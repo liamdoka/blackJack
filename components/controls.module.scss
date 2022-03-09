@@ -1,0 +1,29 @@
+@import '../styles/config';
+
+.controls {
+    min-width: 600px;
+    display: flex;
+    margin: auto;
+    padding: 1em;
+    justify-content: center;
+    align-items: center;
+    
+    gap: 5px;
+
+    .button {
+        border: none;
+        border-radius: 5px;
+        min-height: 30px;
+        min-width: 80px;
+        background-color: $primary-accent-color;
+        color: $background-text-color;
+        font-weight: bold;
+        font-size: 20px;
+        cursor: pointer;
+
+        &:hover{
+            transition: 0.2s;
+            background-color: rgba($primary-accent-color, 0.8);
+        }
+    }
+}
