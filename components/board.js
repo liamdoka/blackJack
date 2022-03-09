@@ -3,6 +3,7 @@ import styles from "./board.module.scss";
 
 export default function Board({ playerHand, dealerHand }) {
 
+    // Get the sum of cards in the hand
     function sumOfHand(hand) {
         let sum = 0;
         hand.forEach(card => {
@@ -16,14 +17,14 @@ export default function Board({ playerHand, dealerHand }) {
             <div className={styles.info}>Dealer Total: <span className={styles.value}>{sumOfHand(dealerHand)}</span></div>
             <div className={styles.dealer}>
                 {dealerHand.map((card) => (
-                    <Card props={card} />
+                    <Card props={card} key={card.key} />
                 ))}
             </div>
             
             <div className={styles.info}>Player Total: <span className={styles.value}>{sumOfHand(playerHand)}</span></div>
             <div className={styles.player}>
                 {playerHand.map((card) => (
-                    <Card props={card} />
+                    <Card props={card} key={card.key} />
                 ))}     
             </div>
         </div>

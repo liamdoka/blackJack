@@ -2,11 +2,12 @@
 
 .card {
     background-color: $background-text-color;
-    padding: 2em;
+    padding: 2em 0;
     border-radius: 20px;
     width: 150px;
     height: 200px;
     text-align: center;
+    user-select: none;
 
 
     .data {
