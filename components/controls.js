@@ -1,14 +1,6 @@
 import styles from './controls.module.scss'
 
-export default function Controls() {
-
-    const hit = () => {
-        console.log("hit")
-    }
-
-    const stand = () => {
-        console.log("stand")
-    }
+export default function Controls({ hit, stand }) {
 
     return (
      <div className={styles.controls}>

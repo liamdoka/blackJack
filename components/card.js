@@ -2,15 +2,12 @@ import styles from "./card.module.scss";
 
 export default function Card({ props }) {
     
-    const handleClick = ({ target }) => {
-        console.log(target)
-    }
-
+    const suits = ['♠', '♥', '♦', '♣']
     return (
-        <div className={styles.card} onClick={handleClick}>
+        <div className={styles.card}>
             <div className={styles.data}>
                 <span>{props.number}</span>
-                <i className={`${styles.suit} ${styles[props.suit]}`}></i>
+                <i>{suits[props.suit]}</i>
             </div>
         </div>
     )

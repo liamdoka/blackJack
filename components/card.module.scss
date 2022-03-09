@@ -2,32 +2,15 @@
 
 .card {
     background-color: $background-text-color;
-    padding: 1em;
+    padding: 2em;
     border-radius: 20px;
     width: 150px;
     height: 200px;
+    text-align: center;
+
 
     .data {
         color: $background-layer-one;
         font-size: 60px;
-    }
-}
-
-.suit {
-
-    .spades::after {
-        content: "\2660";
-    }
-
-    .diams::after {
-        content: "\2666";
-    }
-
-    .hearts::after {
-        content: "\2665";
-    }
-
-    .clubs::after {
-        content: "\2663";
     }
 }
