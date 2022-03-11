@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import Board from '../components/board'
 import Controls from '../components/controls'
+import EndScreen from '../components/endscreen'
 
 export default function Game() {
 
-    const [gameState, setGameState] = useState('init');
+    const [gameState, setGameState] = useState('');
     const [deck, setDeck] = useState([]);
     const [lastMove, setLastMove] = useState('');
     const [dealerHand, setDealerHand] = useState([]);
     const [playerHand, setPlayerHand] = useState([]);
+    const [result, setResult] = useState(null);
+    const [count, setCount] = useState(0);
 
     // Grab a random card from the deck
     function randomCard() {
-        let activeCard = deck[deck.length-1];
-        setDeck((prevDeck) => prevDeck.slice(0, -1));
+        let activeCard = deck[0];
+        setDeck((prevDeck) => prevDeck.slice(1));
         return activeCard
     }
 
@@ -21,8 +24,14 @@ export default function Game() {
     function sumOfHand(hand) {
         let sum = 0;
         hand.forEach(card => {
-            sum += card.value
+            if (!card.hasOwnProperty('hidden') || !card.hidden) {
+                sum += card.value;
+            }
         });
+        // If theres an Ace, assume it's worth 11
+        if (hand.some(card => card.number === "A")) {
+            sum = sum + 10 <= 21 ? sum + 10 : sum
+        }
         return sum
     }
 
@@ -40,6 +49,22 @@ export default function Game() {
         return init_deck
     }
 
+    const createGame = () => {
+
+        createDeck().then((newDeck) => {
+            setDeck(newDeck.slice(4));
+            setDealerHand(newDeck.slice(0,2));
+            setPlayerHand(newDeck.slice(2,4));
+            setDealerHand(prevHand => [prevHand[0], {...prevHand[1], hidden: true}])
+        });
+
+
+        setResult(null);
+        setLastMove('');
+        setGameState('in-game');
+    }
+
+
     // Add a card to the players hand
     const hit = () => {
         let newCard = randomCard();
@@ -53,24 +78,27 @@ export default function Game() {
     }
 
     const reset = () => {
-        setGameState('init')
+        setResult(null);
+        setGameState('init');
     }
 
-    // intialize game
+    // INTIALIZE GAME ONLY ONCE
     useEffect(() => {
-        console.log(gameState);
+        createGame()
+    }, [])
+
+    // INITALIZE EVERY HAND
+    useEffect(() => {
         if (gameState == 'init') {
-            createDeck().then((newDeck) => {
-                setDeck(newDeck.slice(4));
-                setDealerHand(deck.slice(0,2));
-                setPlayerHand(deck.slice(2,4));
-            });
-
-            setLastMove('')
+            setDealerHand(deck.slice(0,2));       
+            setPlayerHand(deck.slice(2,4));
+            setDeck(prevDeck => prevDeck.slice(4));
+            
+            // Hide the dealer's second card
+            setDealerHand(prevHand => [prevHand[0], {...prevHand[1], hidden: true}])
+            
+            setLastMove('');
             setGameState('in-game');
-        } else if (gameState == 'in-game') {
-
-        
         }
     }, [gameState])
 
@@ -84,44 +112,68 @@ export default function Game() {
             if (lastMove == 'hit') {
                 if (playerSum > 21) {
                     // Bust!
-                    console.log("PLAYER BUST");
                     setGameState('game-over');
+                    setTimeout(() => {
+                        setResult('player-bust')
+                    }, 700);
                 }
             } else if (lastMove == 'stand') {
-                if (dealerSum > 21) {
-                    // Dealer Bust!
-                    console.log("dealer busts!")
-                    setGameState('game-over');
-                    
-                } else if (dealerSum < 17) {
-                    // dealer draws another card
-                    let newCard = randomCard();
-                    setDealerHand((prev) => [...prev, newCard])
-                
-                } else {
-                    // neither busts
-                    if (dealerSum > playerSum) {
-                        // Dealer Win!
-                        console.log("dealer win")
-                    } else if (dealerSum == playerSum) {
-                        // Draw!!
-                        console.log("draw")
-                    } else {
-                        // Player Win
-                        console.log("player win")
-                    }
 
-                    setGameState('game-over');
+                if (dealerHand.length == 2 && dealerHand[1]['hidden']) {
+                    
+                    setTimeout(() => {
+                        setDealerHand((prevHand) => (
+                            [prevHand[0], {...prevHand[1], hidden: false}]
+                        ));
+                    }, 300)
+                } else {
+
+                    if (dealerSum > 21) {
+                        // Dealer Bust!
+                        setGameState('game-over');
+                        setTimeout(() => {
+                            setResult('dealer-bust')
+                        }, 700);
+                        
+                    } else if (dealerSum < 17) {
+                        // dealer draws another card
+                        let newCard = randomCard();
+                        setTimeout(() => setDealerHand((prev) => [...prev, newCard]), 700)
+                    
+                    } else {
+                        // neither busts
+                        if (dealerSum > playerSum) {
+                            // Dealer Win!
+                            setTimeout(() => {
+                                setResult('dealer-win')
+                            }, 700);
+                        } else if (dealerSum == playerSum) {
+                            // Draw!!']
+                            setTimeout(() => {
+                                setResult('draw')
+                            }, 700);
+                        } else {
+                            // Player Win
+                            setTimeout(() => {
+                                setResult('player-win')
+                            }, 700);
+                        }
+
+                        setGameState('game-over');
+                    }
                 }
             }
         }
-    })
+    }, [lastMove, dealerHand, playerHand])
 
 
     return (
         <>
             <Board playerHand={playerHand} dealerHand={dealerHand} />
-            <Controls hit={hit} stand={stand} reset={reset} gameState={gameState} />
+            <Controls hit={hit} stand={stand} />
+            {result && 
+                <EndScreen result={result} reset={reset} shuffle={createGame} deckLen={deck.length}/>
+            }
         </>
     )
 }

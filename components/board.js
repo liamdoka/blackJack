@@ -7,8 +7,14 @@ export default function Board({ playerHand, dealerHand }) {
     function sumOfHand(hand) {
         let sum = 0;
         hand.forEach(card => {
-            sum += card.value
+            if (!card.hasOwnProperty('hidden') || !card.hidden) {
+                sum += card.value;
+            }
         });
+        if (hand.some(card => card.number === "A")) {
+            sum = sum + 10 <= 21 ? sum + 10 : sum
+        }
+
         return sum
     }
 
