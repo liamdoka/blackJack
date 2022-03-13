@@ -14,7 +14,6 @@ export default function Board({ playerHand, dealerHand }) {
         if (hand.some(card => card.number === "A")) {
             sum = sum + 10 <= 21 ? sum + 10 : sum
         }
-
         return sum
     }
 

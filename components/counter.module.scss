@@ -1,0 +1,24 @@
+@import '../styles/config';
+
+.container {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+
+    height: 2rem;
+    width: 2rem;
+    padding: 2rem;
+
+    background-color: $background-text-color;
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.count {
+    color: $background-layer-one;
+    font-weight: bold;
+    font-size: 20px;
+}

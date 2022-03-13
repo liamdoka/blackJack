@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import Board from '../components/board'
-import Controls from '../components/controls'
-import EndScreen from '../components/endscreen'
+import Board from '../components/board';
+import Controls from '../components/controls';
+import EndScreen from '../components/endscreen';
+import Counter from '../components/counter';
 
 export default function Game() {
 
@@ -12,6 +13,8 @@ export default function Game() {
     const [playerHand, setPlayerHand] = useState([]);
     const [result, setResult] = useState(null);
     const [count, setCount] = useState(0);
+    const [countedCards, setCountedCards] = useState([]);
+    const counterArr = {"A": -1, "2": 1, "3": 1, "4": 1, "5": 1, "6": 1, "7": 0, "8": 0, "9": 0, "10": -1, "J": -1, "Q": -1, "K": -1};
 
     // Grab a random card from the deck
     function randomCard() {
@@ -41,7 +44,7 @@ export default function Game() {
         const valueList = {"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 10, "Q": 10, "K": 10};
         Object.keys(valueList).forEach(key => {
             for (let i = 0; i < 4; i++) {
-                init_deck.push({number: key, suit: i, value: valueList[key], key: init_deck.length});
+                init_deck.push({number: key, suit: i, value: valueList[key], key: init_deck.length, counted: false});
             }
         });
 
@@ -58,7 +61,8 @@ export default function Game() {
             setDealerHand(prevHand => [prevHand[0], {...prevHand[1], hidden: true}])
         });
 
-
+        setCount(0);
+        setCountedCards([]);
         setResult(null);
         setLastMove('');
         setGameState('in-game');
@@ -167,8 +171,33 @@ export default function Game() {
     }, [lastMove, dealerHand, playerHand])
 
 
+
+    useEffect(() => {
+
+        dealerHand.forEach(card => {
+            if (!countedCards.includes(card.key) && !card.hidden) {
+                setCount(prevCount => prevCount + counterArr[card.number])
+                setCountedCards(prevCards => prevCards + [card.key])
+
+                console.log(card.number, counterArr[card.number])
+            } 
+        });
+
+        playerHand.forEach(card => {
+            if (!countedCards.includes(card.key)) {
+                setCount(prevCount => prevCount + counterArr[card.number])
+                setCountedCards(prevCards => prevCards + [card.key])
+                
+                console.log(card.number, counterArr[card.number])
+            }
+        });
+
+    }, [dealerHand, playerHand])
+
+
     return (
         <>
+            <Counter count={count} />
             <Board playerHand={playerHand} dealerHand={dealerHand} />
             <Controls hit={hit} stand={stand} />
             {result && 
